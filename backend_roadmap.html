@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backend Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Unbounded:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --accent: #00ff88;
+    --accent2: #7c6af7;
+    --accent3: #ff6b6b;
+    --accent4: #ffb347;
+    --text: #e8e8f0;
+    --muted: #555570;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 60px 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Back link */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    margin-bottom: 50px;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--gold); }
+
+  .header {
+    text-align: center;
+    margin-bottom: 70px;
+    animation: fadeDown 0.8s ease both;
+  }
+
+  .header-label {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    opacity: 0.8;
+  }
+
+  .header h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(28px, 6vw, 52px);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 60%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+  }
+
+  .header p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .header p span { color: var(--accent); }
+
+  .version-badge {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: rgba(124,106,247,0.15);
+    color: var(--accent2);
+    border: 1px solid rgba(124,106,247,0.3);
+    margin-top: 12px;
+  }
+
+  .progress-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 50px;
+    animation: fadeDown 0.8s 0.1s ease both;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .progress-text {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .progress-text strong {
+    color: var(--accent);
+    font-size: 20px;
+    display: block;
+    margin-bottom: 2px;
+    font-family: 'Unbounded', sans-serif;
+  }
+
+  .progress-bar-wrap {
+    flex: 1;
+    background: var(--border);
+    border-radius: 999px;
+    height: 8px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 999px;
+    transition: width 0.6s ease;
+  }
+
+  .phase {
+    margin-bottom: 40px;
+    animation: fadeUp 0.7s ease both;
+  }
+  .phase:nth-child(1) { animation-delay: 0.1s; }
+  .phase:nth-child(2) { animation-delay: 0.2s; }
+  .phase:nth-child(3) { animation-delay: 0.3s; }
+  .phase:nth-child(4) { animation-delay: 0.4s; }
+  .phase:nth-child(5) { animation-delay: 0.5s; }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+    user-select: none;
+  }
+
+  .phase-number {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 2px solid;
+  }
+
+  .phase-number.c1 { border-color: var(--accent);  color: var(--accent);  }
+  .phase-number.c2 { border-color: var(--accent2); color: var(--accent2); }
+  .phase-number.c3 { border-color: var(--accent4); color: var(--accent4); }
+  .phase-number.c4 { border-color: var(--accent3); color: var(--accent3); }
+  .phase-number.c5 { border-color: #a78bfa;        color: #a78bfa;        }
+
+  .phase-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .phase-duration {
+    margin-left: auto;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .phase-body { padding-left: 50px; }
+
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 600px) {
+    .cards { grid-template-columns: 1fr; }
+    .phase-body { padding-left: 0; }
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  .card.c1::before { background: var(--accent);  }
+  .card.c2::before { background: var(--accent2); }
+  .card.c3::before { background: var(--accent4); }
+  .card.c4::before { background: var(--accent3); }
+  .card.c5::before { background: #a78bfa;        }
+
+  .card:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-2px); }
+  .card:hover::before { opacity: 1; }
+
+  .card.done {
+    border-color: rgba(0,255,136,0.3);
+    background: rgba(0,255,136,0.04);
+  }
+  .card.done::before { opacity: 1; background: var(--accent) !important; }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 10px;
+  }
+
+  .card-name { font-size: 13px; font-weight: 600; line-height: 1.3; }
+
+  .checkbox {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-size: 12px;
+    margin-top: 1px;
+  }
+  .card.done .checkbox { background: var(--accent); border-color: var(--accent); color: #000; }
+
+  .card-desc { font-size: 11px; color: var(--muted); line-height: 1.6; }
+
+  .tags { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .tag {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+  .tag.already { background: rgba(0,255,136,0.15);  color: var(--accent);  }
+  .tag.key     { background: rgba(124,106,247,0.15); color: var(--accent2); }
+  .tag.must    { background: rgba(255,107,107,0.15); color: var(--accent3); }
+  .tag.new     { background: rgba(56,189,248,0.15);  color: #38bdf8;        }
+  .tag.bonus   { background: rgba(255,179,71,0.15);  color: var(--accent4); }
+
+  .note {
+    background: rgba(0,255,136,0.05);
+    border: 1px solid rgba(0,255,136,0.2);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-top: 16px;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .note strong { color: var(--accent); }
+  .note.updated { background: rgba(124,106,247,0.05); border-color: rgba(124,106,247,0.25); }
+  .note.updated strong { color: var(--accent2); }
+
+  .phase-line {
+    width: 1px;
+    background: linear-gradient(to bottom, var(--border), transparent);
+    height: 20px;
+    margin: 0 0 0 17px;
+  }
+
+  .result-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-top: 50px;
+    animation: fadeUp 0.7s 0.6s ease both;
+    text-align: center;
+  }
+  .result-block h3 { font-family: 'Unbounded', sans-serif; font-size: 16px; margin-bottom: 10px; color: var(--accent); }
+  .result-block p { font-size: 12px; color: var(--muted); line-height: 1.8; }
+  .result-block .salary { font-family: 'Unbounded', sans-serif; font-size: 28px; font-weight: 900; color: var(--text); margin: 16px 0 6px; }
+  .result-block .salary span { color: var(--accent); }
+
+  .reset-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.2s;
+  }
+  .reset-btn:hover { border-color: var(--accent3); color: var(--accent3); }
+
+  @keyframes fadeDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeUp   { from { opacity:0; transform:translateY( 20px); } to { opacity:1; transform:translateY(0); } }
+</style>
+</head>
+<body>
+<div class="container">
+    <a class="back-link" href="index.html">← назад к выбору</a>
+
+
+  <div class="header">
+    <div class="header-label">// персональный план</div>
+    <h1>Backend Roadmap</h1>
+    <p>Путь от Junior Python-разработчика до первой работы<br>
+    Уже есть: <span>Python</span>, <span>C++</span>, <span>SQL</span>, <span>Linux (базово)</span>, <span>Git</span></p>
+    <div class="version-badge">v2.0 — обновлено с учётом фидбека</div>
+  </div>
+
+  <div class="progress-container">
+    <div class="progress-text">
+      <strong id="progress-num">0%</strong>выполнено
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+    </div>
+    <div class="progress-text" style="text-align:right">
+      <strong id="done-count" style="color:var(--text)">0/28</strong>задач
+    </div>
+  </div>
+
+  <!-- PHASE 1 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-number c1">01</div>
+      <div><div class="phase-title" style="color:var(--accent)">Фундамент</div></div>
+      <div class="phase-duration">1–2 месяца</div>
+    </div>
+    <div class="phase-body">
+      <div class="cards">
+        <div class="card c1 done" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">Python — основы</div><div class="checkbox">✓</div></div>
+          <div class="card-desc">ООП, функции, модули, исключения, list comprehensions</div>
+          <div class="tags"><span class="tag already">уже есть</span></div>
+        </div>
+        <div class="card c1 done" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">SQL — основы</div><div class="checkbox">✓</div></div>
+          <div class="card-desc">SELECT, JOIN, GROUP BY, подзапросы</div>
+          <div class="tags"><span class="tag already">уже есть</span></div>
+        </div>
+        <div class="card c1 done" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">Git</div><div class="checkbox">✓</div></div>
+          <div class="card-desc">commit, push, pull, branch, merge, rebase</div>
+          <div class="tags"><span class="tag already">уже есть</span></div>
+        </div>
+        <div class="card c1" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">Алгоритмы и структуры данных</div><div class="checkbox"></div></div>
+          <div class="card-desc">Массивы, хэш-таблицы, стеки, очереди, O(n). 50–70 задач LeetCode Easy + 15–20 Medium (sliding window, two pointers, binary search)</div>
+          <div class="tags"><span class="tag must">важно</span></div>
+        </div>
+        <div class="card c1" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">Linux углублённо</div><div class="checkbox"></div></div>
+          <div class="card-desc">Bash-скрипты, процессы, права доступа, SSH, cron</div>
+          <div class="tags"><span class="tag key">нужно</span></div>
+        </div>
+        <div class="card c1" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">HTTP и сети</div><div class="checkbox"></div></div>
+          <div class="card-desc">Методы (GET/POST/PUT/DELETE), коды ответов, заголовки, REST, JSON</div>
+          <div class="tags"><span class="tag must">важно</span></div>
+        </div>
+      </div>
+      <div class="note">
+        <strong>Совет по алгоритмам:</strong> не бери Medium задачи случайно — фокусируйся на паттернах: sliding window, two pointers, binary search. Так 20 задач дадут больше, чем 50 случайных.
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-line"></div>
+
+  <!-- PHASE 2 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-number c2">02</div>
+      <div><div class="phase-title" style="color:var(--accent2)">Веб, фреймворк и async</div></div>
+      <div class="phase-duration">2–3 месяца</div>
+    </div>
+    <div class="phase-body">
+      <div class="cards">
+        <div class="card c2" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">Асинхронность в Python</div><div class="checkbox"></div></div>
+          <div class="card-desc">async/await, event loop, разница sync vs async, когда async нужен — до или вместе с FastAPI</div>
+          <div class="tags"><span class="tag must">важно</span><span class="tag new">перенесено сюда</span></div>
+        </div>
+        <div class="card c2" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">FastAPI</div><div class="checkbox"></div></div>
+          <div class="card-desc">Роуты, Pydantic-модели, зависимости, middleware, фоновые задачи, Swagger-документация</div>
+          <div class="tags"><span class="tag must">главное</span></div>
+        </div>
+        <div class="card c2" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">PostgreSQL углублённо</div><div class="checkbox"></div></div>
+          <div class="card-desc">Индексы, транзакции, EXPLAIN ANALYZE, нормализация, isolation levels, deadlocks, connection pooling</div>
+          <div class="tags"><span class="tag key">нужно</span><span class="tag new">расширено</span></div>
+        </div>
+        <div class="card c2" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">SQLAlchemy / ORM</div><div class="checkbox"></div></div>
+          <div class="card-desc">Модели, сессии, миграции через Alembic, связи между таблицами, async-сессии (asyncpg)</div>
+          <div class="tags"><span class="tag key">нужно</span></div>
+        </div>
+        <div class="card c2" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">Аутентификация</div><div class="checkbox"></div></div>
+          <div class="card-desc">JWT-токены, OAuth2, хэширование паролей (bcrypt), сессии</div>
+          <div class="tags"><span class="tag must">важно</span></div>
+        </div>
+        <div class="card c2" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">Безопасность API</div><div class="checkbox"></div></div>
+          <div class="card-desc">CORS, rate limiting, базовый OWASP (SQL injection, XSS, CSRF), валидация входных данных</div>
+          <div class="tags"><span class="tag must">важно</span><span class="tag new">добавлено</span></div>
+        </div>
+        <div class="card c2" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">REST API — проектирование</div><div class="checkbox"></div></div>
+          <div class="card-desc">Правильная структура эндпоинтов, версионирование, документация (Swagger/OpenAPI)</div>
+          <div class="tags"><span class="tag key">нужно</span></div>
+        </div>
+        <div class="card c2" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">Тестирование</div><div class="checkbox"></div></div>
+          <div class="card-desc">pytest, unit-тесты, интеграционные тесты, TestClient в FastAPI, моки</div>
+          <div class="tags"><span class="tag key">нужно</span></div>
+        </div>
+      </div>
+      <div class="note">
+        <strong>Pet-проект #1:</strong> REST API с авторизацией через JWT, CRUD с PostgreSQL, rate limiting. Всё async. Тесты через pytest.
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-line"></div>
+
+  <!-- PHASE 3 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-number c3">03</div>
+      <div><div class="phase-title" style="color:var(--accent4)">Инфраструктура</div></div>
+      <div class="phase-duration">1–2 месяца</div>
+    </div>
+    <div class="phase-body">
+      <div class="cards">
+        <div class="card c3" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">Docker</div><div class="checkbox"></div></div>
+          <div class="card-desc">Dockerfile, docker-compose, образы, контейнеры, volumes, networks</div>
+          <div class="tags"><span class="tag must">важно</span></div>
+        </div>
+        <div class="card c3" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">Nginx (базово)</div><div class="checkbox"></div></div>
+          <div class="card-desc">Reverse proxy для FastAPI, раздача статики, базовая конфигурация. Не глубоко — достаточно понять принцип</div>
+          <div class="tags"><span class="tag bonus">плюс</span><span class="tag new">добавлено</span></div>
+        </div>
+        <div class="card c3" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">Redis</div><div class="checkbox"></div></div>
+          <div class="card-desc">Кэширование, сессии, pub/sub. Базовые команды и интеграция с Python</div>
+          <div class="tags"><span class="tag key">нужно</span></div>
+        </div>
+        <div class="card c3" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">Celery / очереди задач</div><div class="checkbox"></div></div>
+          <div class="card-desc">Фоновые задачи, отложенное выполнение, интеграция с Redis/RabbitMQ</div>
+          <div class="tags"><span class="tag key">нужно</span></div>
+        </div>
+        <div class="card c3" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">CI/CD — GitHub Actions</div><div class="checkbox"></div></div>
+          <div class="card-desc">Автозапуск линтера (ruff) и тестов на каждый push. 2–3 часа работы — сильно поднимает уровень портфолио</div>
+          <div class="tags"><span class="tag must">важно</span><span class="tag new">добавлено</span></div>
+        </div>
+        <div class="card c3" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">Логирование и мониторинг</div><div class="checkbox"></div></div>
+          <div class="card-desc">logging, structlog, базовое понимание Prometheus/Grafana</div>
+          <div class="tags"><span class="tag key">нужно</span></div>
+        </div>
+      </div>
+      <div class="note">
+        <strong>Pet-проект #2:</strong> Упакуй API из фазы 2 в docker-compose (FastAPI + PostgreSQL + Redis + Nginx). Добавь GitHub Actions с тестами. Это уже выглядит как production-ready проект.
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-line"></div>
+
+  <!-- PHASE 4 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-number c4">04</div>
+      <div><div class="phase-title" style="color:var(--accent3)">Архитектура и практика</div></div>
+      <div class="phase-duration">1–2 месяца</div>
+    </div>
+    <div class="phase-body">
+      <div class="cards">
+        <div class="card c4" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">Clean Architecture / SOLID</div><div class="checkbox"></div></div>
+          <div class="card-desc">Разделение слоёв, dependency injection, принципы хорошего кода — после практики, не в начале</div>
+          <div class="tags"><span class="tag key">нужно</span></div>
+        </div>
+        <div class="card c4" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">Паттерны проектирования</div><div class="checkbox"></div></div>
+          <div class="card-desc">Repository, Service Layer, Factory, Singleton — на практике, не теоретически</div>
+          <div class="tags"><span class="tag key">нужно</span></div>
+        </div>
+        <div class="card c4" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">asyncio углублённо</div><div class="checkbox"></div></div>
+          <div class="card-desc">asyncpg, aiohttp, gather, задачи и отмена, где async нужен, а где вредит</div>
+          <div class="tags"><span class="tag key">нужно</span></div>
+        </div>
+        <div class="card c4" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">Code Review культура</div><div class="checkbox"></div></div>
+          <div class="card-desc">Как читать чужой код, принимать правки, линтеры (ruff, mypy), типизация</div>
+          <div class="tags"><span class="tag key">нужно</span></div>
+        </div>
+      </div>
+      <div class="note">
+        <strong>Pet-проект #3 (финальный):</strong> Полноценный сервис — API маркетплейса, чат или система бронирования. Clean Architecture, тесты, Docker, Nginx, CI/CD, документация на GitHub. <strong>Это твоё портфолио.</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-line"></div>
+
+  <!-- PHASE 5 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-number c5">05</div>
+      <div><div class="phase-title" style="color:#a78bfa">Поиск работы</div></div>
+      <div class="phase-duration">1 месяц</div>
+    </div>
+    <div class="phase-body">
+      <div class="cards">
+        <div class="card c5" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">GitHub портфолио</div><div class="checkbox"></div></div>
+          <div class="card-desc">3 репозитория с README, описанием стека, инструкцией запуска и бейджами CI</div>
+          <div class="tags"><span class="tag must">критично</span></div>
+        </div>
+        <div class="card c5" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">Резюме</div><div class="checkbox"></div></div>
+          <div class="card-desc">Чёткий стек технологий, Pet-проекты с описанием и ссылками на GitHub, без воды</div>
+          <div class="tags"><span class="tag must">критично</span></div>
+        </div>
+        <div class="card c5" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">Подготовка к собеседованиям</div><div class="checkbox"></div></div>
+          <div class="card-desc">LeetCode Medium (20–30 по паттернам), теория по БД, HTTP, Python internals, вопросы по asyncio</div>
+          <div class="tags"><span class="tag must">критично</span></div>
+        </div>
+        <div class="card c5" onclick="toggleCard(this)">
+          <div class="card-top"><div class="card-name">Отклики и нетворкинг</div><div class="checkbox"></div></div>
+          <div class="card-desc">HeadHunter, Хабр Карьера, LinkedIn, Telegram-каналы. Не жди идеального момента — начинай откликаться после Pet-проекта #2</div>
+          <div class="tags"><span class="tag key">важно</span></div>
+        </div>
+      </div>
+      <div class="note updated">
+        <strong>Совет:</strong> отказы на ранних этапах — это полезно. Они показывают что реально спрашивают и помогают скорректировать план. Начинай откликаться раньше, чем кажется «готов».
+      </div>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="result-block">
+    <h3>// цель достигнута</h3>
+    <p>После прохождения этого плана ты готов к позиции Junior Backend Developer</p>
+    <div class="salary"><span>80–150</span> тыс. ₽/мес</div>
+    <p style="font-size:11px">стартовая зарплата Junior Backend (Python) в России<br>
+    <span style="color:var(--accent2)">Middle через 1.5–2 года: 200–350 тыс. ₽</span></p>
+    <button class="reset-btn" onclick="resetAll()">↺ сбросить прогресс</button>
+  </div>
+
+</div>
+
+<script>
+  const STORAGE_KEY = 'backend_roadmap_v2';
+
+  function getState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; }
+  }
+  function saveState(s) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch {}
+  }
+  function getCardId(card) { return card.querySelector('.card-name').textContent.trim(); }
+
+  function updateProgress() {
+    const all  = document.querySelectorAll('.card');
+    const done = document.querySelectorAll('.card.done');
+    const pct  = Math.round((done.length / all.length) * 100);
+    document.getElementById('progress-bar').style.width = pct + '%';
+    document.getElementById('progress-num').textContent = pct + '%';
+    document.getElementById('done-count').textContent   = done.length + '/' + all.length;
+  }
+
+  function toggleCard(card) {
+    card.classList.toggle('done');
+    card.querySelector('.checkbox').textContent = card.classList.contains('done') ? '✓' : '';
+    const s = getState();
+    s[getCardId(card)] = card.classList.contains('done');
+    saveState(s);
+    updateProgress();
+  }
+
+  function resetAll() {
+    if (!confirm('Сбросить весь прогресс?')) return;
+    saveState({});
+    document.querySelectorAll('.card').forEach(card => {
+      if (!card.querySelector('.tag.already')) {
+        card.classList.remove('done');
+        card.querySelector('.checkbox').textContent = '';
+      }
+    });
+    updateProgress();
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const s = getState();
+    document.querySelectorAll('.card').forEach(card => {
+      const id = getCardId(card);
+      if (s[id] === true)  { card.classList.add('done');    card.querySelector('.checkbox').textContent = '✓'; }
+      if (s[id] === false) { card.classList.remove('done'); card.querySelector('.checkbox').textContent = '';  }
+    });
+    updateProgress();
+  });
+</script>
+</body>
+</html>

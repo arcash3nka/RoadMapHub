@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First Pay in IT</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Unbounded:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --gold: #ffd93d;
+    --gold2: #ff9f1c;
+    --teal: #2ec4b6;
+    --pink: #ff6b9d;
+    --text: #e8e8f0;
+    --muted: #555570;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 20% 20%, rgba(255,217,61,0.05) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 80%, rgba(46,196,182,0.05) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Back link */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    margin-bottom: 50px;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--gold); }
+
+  /* Header */
+  .header {
+    margin-bottom: 60px;
+    animation: fadeDown 0.8s ease both;
+  }
+
+  .header-label {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    opacity: 0.8;
+  }
+
+  .header h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(26px, 5vw, 46px);
+    font-weight: 900;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 0%, var(--gold) 50%, var(--gold2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+  }
+
+  .header p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.8;
+    max-width: 600px;
+  }
+
+  .header p strong { color: var(--gold); }
+
+  /* Timeline */
+  .timeline { position: relative; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 17px;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--gold), var(--teal), transparent);
+    opacity: 0.3;
+  }
+
+  .month-block {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 40px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .month-block:nth-child(1) { animation-delay: 0.1s; }
+  .month-block:nth-child(2) { animation-delay: 0.2s; }
+  .month-block:nth-child(3) { animation-delay: 0.3s; }
+  .month-block:nth-child(4) { animation-delay: 0.4s; }
+
+  .month-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    margin-top: 2px;
+    background: var(--bg);
+    position: relative;
+    z-index: 1;
+  }
+  .month-dot.g { border-color: var(--gold); color: var(--gold); }
+  .month-dot.t { border-color: var(--teal); color: var(--teal); }
+  .month-dot.p { border-color: var(--pink); color: var(--pink); }
+  .month-dot.s { border-color: #a78bfa; color: #a78bfa; }
+
+  .month-content { flex: 1; }
+
+  .month-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .month-title.g { color: var(--gold); }
+  .month-title.t { color: var(--teal); }
+  .month-title.p { color: var(--pink); }
+  .month-title.s { color: #a78bfa; }
+
+  .month-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .tasks {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 580px) { .tasks { grid-template-columns: 1fr; } }
+
+  .task {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .task::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .task.g::before { background: var(--gold); }
+  .task.t::before { background: var(--teal); }
+  .task.p::before { background: var(--pink); }
+  .task.s::before { background: #a78bfa; }
+
+  .task:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.1); }
+  .task:hover::before { opacity: 1; }
+  .task.done { border-color: rgba(255,217,61,0.3); background: rgba(255,217,61,0.04); }
+  .task.done::before { opacity: 1; }
+
+  .task-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .task-name { font-size: 12px; font-weight: 600; line-height: 1.3; }
+  .task-check {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .task.done .task-check { background: var(--gold); border-color: var(--gold); color: #000; }
+  .task-desc { font-size: 10px; color: var(--muted); line-height: 1.5; }
+
+  /* Tip box */
+  .tip {
+    background: rgba(255,217,61,0.05);
+    border: 1px solid rgba(255,217,61,0.2);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-top: 14px;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .tip strong { color: var(--gold); }
+
+  /* Income milestone */
+  .milestone {
+    background: var(--surface);
+    border: 1px solid rgba(255,217,61,0.25);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .milestone-icon { font-size: 28px; flex-shrink: 0; }
+  .milestone-text { flex: 1; }
+  .milestone-text .label { font-size: 10px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+  .milestone-text .amount {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--gold);
+  }
+  .milestone-text .note { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  /* Progress */
+  .progress-bar-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 44px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    animation: fadeDown 0.7s 0.1s ease both;
+  }
+  .prog-label { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .prog-label strong { color: var(--gold); font-size: 18px; font-family: 'Unbounded', sans-serif; display: block; margin-bottom: 2px; }
+  .prog-wrap { flex: 1; background: var(--border); border-radius: 999px; height: 7px; overflow: hidden; }
+  .prog-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold2)); border-radius: 999px; transition: width 0.5s ease; }
+
+  .reset-btn {
+    background: none; border: 1px solid var(--border);
+    color: var(--muted); font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    padding: 8px 16px; border-radius: 6px; cursor: pointer;
+    margin-top: 30px; transition: all 0.2s; display: block; margin-left: auto; margin-right: auto;
+  }
+  .reset-btn:hover { border-color: var(--pink); color: var(--pink); }
+
+  @keyframes fadeDown { from { opacity:0; transform:translateY(-18px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeUp   { from { opacity:0; transform:translateY( 18px); } to { opacity:1; transform:translateY(0); } }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <a class="back-link" href="index.html">← назад к выбору</a>
+
+  <div class="header">
+    <div class="header-label">// быстрый старт</div>
+    <h1>Первый доход в IT</h1>
+    <p>Параллельно с учёбой — <strong>3 месяца до первых денег.</strong><br>
+    Парсинг + Telegram-боты + фриланс-биржи. Без диплома, без опыта.</p>
+  </div>
+
+  <div class="progress-bar-container">
+    <div class="prog-label"><strong id="pct">0%</strong>выполнено</div>
+    <div class="prog-wrap"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+    <div class="prog-label" style="text-align:right"><strong id="cnt" style="color:var(--text)">0/18</strong>задач</div>
+  </div>
+
+  <div class="timeline">
+
+    <!-- МЕСЯЦ 1 -->
+    <div class="month-block">
+      <div class="month-dot g">М1</div>
+      <div class="month-content">
+        <div class="month-title g">Месяц 1 — Инструменты</div>
+        <div class="month-sub">Учишь парсинг и боты, делаешь первые проекты</div>
+        <div class="tasks">
+          <div class="task g" onclick="toggleTask(this)">
+            <div class="task-top"><div class="task-name">Парсинг с requests + BeautifulSoup</div><div class="task-check"></div></div>
+            <div class="task-desc">Сбор данных с сайтов, работа с HTML, сохранение в CSV/JSON</div>
+          </div>
+          <div class="task g" onclick="toggleTask(this)">
+            <div class="task-top"><div class="task-name">Selenium / Playwright</div><div class="task-check"></div></div>
+            <div class="task-desc">Парсинг динамических сайтов, авторизация, клики</div>
+          </div>
+          <div class="task g" onclick="toggleTask(this)">
+            <div class="task-top"><div class="task-name">Telegram Bot API (aiogram)</div><div class="task-check"></div></div>
+            <div class="task-desc">Команды, кнопки, FSM (состояния), отправка медиа</div>
+          </div>
+          <div class="task g" onclick="toggleTask(this)">
+            <div class="task-top"><div class="task-name">Проект #1 — Парсер</div><div class="task-check"></div></div>
+            <div class="task-desc">Парсер цен, вакансий или объявлений с Avito/HH. Выгрузка в Excel</div>
+          </div>
+          <div class="task g" onclick="toggleTask(this)">
+            <div class="task-top"><div class="task-name">Проект #2 — Telegram-бот</div><div class="task-check"></div></div>
+            <div class="task-desc">Бот с командами и кнопками. Например: погода, курс валют, напоминалка</div>
+          </div>
+        </div>
+        <div class="tip"><strong>Совет:</strong> проекты сразу выкладывай на GitHub с README. Это и портфолио, и визитка для заказчиков.</div>
+      </div>
+    </div>
+
+    <!-- МЕСЯЦ 2 -->
+    <div class="month-block">
+      <div class="month-dot t">М2</div>
+      <div class="month-content">
+        <div class="month-title t">Месяц 2 — Портфолио и биржи</div>
+        <div class="month-sub">Регистрируешься на фриланс, берёшь первые заказы</div>
+        <div class="tasks">
+          <div class="task t" onclick="toggleTask(this)">
+            <div class="task-top"><div class="task-name">Регистрация на биржах</div><div class="task-check"></div></div>
+            <div class="task-desc">Kwork, FL.ru, Freelance.ru, Telegram-каналы с заказами</div>
+          </div>
+          <div class="task t" onclick="toggleTask(this)">
+            <div class="task-top"><div class="task-name">Оформить профиль</div><div class="task-check"></div></div>
+            <div class="task-desc">Фото, описание, стек, ссылки на GitHub-проекты. Первое впечатление решает</div>
+          </div>
+          <div class="task t" onclick="toggleTask(this)">
+            <div class="task-top"><div class="task-name">Проект #3 — Комплексный бот</div><div class="task-check"></div></div>
+            <div class="task-desc">Бот + парсинг + база данных (SQLite). Например: мониторинг цен с уведомлениями</div>
+          </div>
+          <div class="task t" onclick="toggleTask(this)">
+            <div class="task-top"><div class="task-name">Первые 5 откликов</div><div class="task-check"></div></div>
+            <div class="task-desc">Отвечай на заказы ниже рынка — нужны первые отзывы. Качество важнее денег на старте</div>
+          </div>
+        </div>
+        <div class="tip"><strong>Стратегия:</strong> первые 2–3 заказа бери дёшево или бесплатно в обмен на отзыв. Без отзывов на биржах очень тяжело.</div>
+        <div class="milestone">
+          <div class="milestone-icon">🎯</div>
+          <div class="milestone-text">
+            <div class="label">цель месяца</div>
+            <div class="amount">первый заказ</div>
+            <div class="note">даже за 500–1000 ₽ — это старт репутации</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- МЕСЯЦ 3 -->
+    <div class="month-block">
+      <div class="month-dot p">М3</div>
+      <div class="month-content">
+        <div class="month-title p">Месяц 3 — Первый доход</div>
+        <div class="month-sub">Берёшь заказы стабильно, поднимаешь ценник</div>
+        <div class="tasks">
+          <div class="task p" onclick="toggleTask(this)">
+            <div class="task-top"><div class="task-name">5–10 выполненных заказов</div><div class="task-check"></div></div>
+            <div class="task-desc">Парсеры, боты, автоматизация. Каждый — в портфолио</div>
+          </div>
+          <div class="task p" onclick="toggleTask(this)">
+            <div class="task-top"><div class="task-name">Поднять ценник</div><div class="task-check"></div></div>
+            <div class="task-desc">После первых отзывов смело поднимай цены. Бот — от 3000 ₽, парсер — от 2000 ₽</div>
+          </div>
+          <div class="task p" onclick="toggleTask(this)">
+            <div class="task-top"><div class="task-name">Нетворкинг в Telegram</div><div class="task-check"></div></div>
+            <div class="task-desc">Каналы: Python Jobs, Freelance Python, IT-заказы. Прямые заказчики без комиссии биржи</div>
+          </div>
+          <div class="task p" onclick="toggleTask(this)">
+            <div class="task-top"><div class="task-name">Научиться оценивать задачи</div><div class="task-check"></div></div>
+            <div class="task-desc">Понять сколько времени уходит на разные типы задач. Не демпинговать без причины</div>
+          </div>
+        </div>
+        <div class="milestone">
+          <div class="milestone-icon">💰</div>
+          <div class="milestone-text">
+            <div class="label">реальный результат к концу месяца 3</div>
+            <div class="amount">15 000 – 40 000 ₽</div>
+            <div class="note">при 2–3 заказах в месяц + параллельная учёба</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ЧТО ДАЛЬШЕ -->
+    <div class="month-block">
+      <div class="month-dot s">→</div>
+      <div class="month-content">
+        <div class="month-title s">Что дальше?</div>
+        <div class="month-sub">Два пути после первых денег</div>
+        <div class="tasks">
+          <div class="task s" onclick="toggleTask(this)">
+            <div class="task-top"><div class="task-name">Путь A — Фриланс</div><div class="task-check"></div></div>
+            <div class="task-desc">Расширяй стек: FastAPI, боты сложнее, автоматизация бизнес-процессов. Доход 50–150к/мес через год</div>
+          </div>
+          <div class="task s" onclick="toggleTask(this)">
+            <div class="task-top"><div class="task-name">Путь B — Backend (найм)</div><div class="task-check"></div></div>
+            <div class="task-desc">Используй опыт как трамплин — переходи на Backend Roadmap. Фриланс-проекты идут в резюме</div>
+          </div>
+        </div>
+        <div class="tip"><strong>Важно:</strong> фриланс и Backend-roadmap можно совмещать. Фриланс даёт деньги сейчас, Backend — карьеру через год. Не надо выбирать одно — делай оба параллельно.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <button class="reset-btn" onclick="resetAll()">↺ сбросить прогресс</button>
+
+</div>
+
+<script>
+  const KEY = 'income_roadmap_v1';
+  const getState = () => { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { return {}; } };
+  const saveState = s => { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch {} };
+  const getId = el => el.querySelector('.task-name').textContent.trim();
+
+  function updateProgress() {
+    const all = document.querySelectorAll('.task');
+    const done = document.querySelectorAll('.task.done');
+    const pct = Math.round(done.length / all.length * 100);
+    document.getElementById('prog').style.width = pct + '%';
+    document.getElementById('pct').textContent = pct + '%';
+    document.getElementById('cnt').textContent = done.length + '/' + all.length;
+  }
+
+  function toggleTask(el) {
+    el.classList.toggle('done');
+    el.querySelector('.task-check').textContent = el.classList.contains('done') ? '✓' : '';
+    const s = getState(); s[getId(el)] = el.classList.contains('done'); saveState(s);
+    updateProgress();
+  }
+
+  function resetAll() {
+    if (!confirm('Сбросить прогресс?')) return;
+    saveState({});
+    document.querySelectorAll('.task').forEach(t => { t.classList.remove('done'); t.querySelector('.task-check').textContent = ''; });
+    updateProgress();
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const s = getState();
+    document.querySelectorAll('.task').forEach(t => {
+      if (s[getId(t)]) { t.classList.add('done'); t.querySelector('.task-check').textContent = '✓'; }
+    });
+    updateProgress();
+  });
+</script>
+</body>
+</html>
